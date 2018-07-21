@@ -1,0 +1,48 @@
+LHS RHS SCOPE 
+
+Engine = Master puppeteer that oversees scope and compiler. Head honcho. 
+
+Compiler = declares variables and checks with scope to see if declaration already exists. Parses expressions (var a = 2; breaks down into 2 pieces, var a and 2. Checks with scope to see if var a has already been declared and if not, assigns a value) 
+
+Scope = wise old owl book keeper that oversees all variable declaration by keeping lists of declarations
+
+left hand side is when a variable is to be declared, comes before an = . Aka var a = 2. compiler would make a lhs lookup to check for a and its declaration and then assign a the value of 2.
+
+rhs lookup is when a variable is already declared, mostly comes after an = or by reference in a function (i.e.: foo(a). Essentially, its not checking to see if a value is declared or not, compiler is just looking to retrieve its value since if it comes after an = then its already declared ya feel me Jane?
+
+
+QUIZ ON LHS RHS
+
+Find all lhs and rhs lookups
+
+function foo(a) {
+	var b = a;
+	return a + b;
+}
+
+var c = foo( 2 );
+
+
+R H S
+ -foo(a)
+ - return a
+ - return b;
+ -foo(2)
+
+L H S
+ -var b = a;
+ - var c = …; 
+ - var a??
+ 
+
+NESTED SCOPE
+
+If engine cannot find a declaration in the current scope it go upwards until it finds it. For instance: consider you are in a building and looking for someone inside of it with no clue what floor they are on. You start at the lowest, inner floor first (ground). If you don’t find the person you’re looking for on the ground level, you go to the first floor (one above ground). If you don’t find the person on the second, you go to the third. Onwards and upwards until you reach the very top, the roof (global scope). Either you find the person or you don’t, but it was still required of you to go through each floor starting at the very bottom. 
+
+referenceError is the result of a scope related reference issue
+
+typeError is the result of using the variable in an impossible way.
+
+If the engine performs LHS lookup and doesn’t find it all the way up to the global scope, it will create a new variable in the global scope. This is bad. Avoid random variable creation by using strict mode. Strict mode disallows this behavior. 
+
+
