@@ -1,1 +1,90 @@
 
+Function vs block scope
+
+Function parameters are variables listed as part of the function definition
+
+functions create scope bubbles, i.e.: all variables created within the function belong to the function, and do not exist globally. 
+
+Hiding variables in functions is a way to expose only what is necessary, and hide everything else.
+
+Ex:
+
+function doSomething(a) {
+	b = a + doSomethingElse( a * 2 );
+
+	console.log( b * 3 );
+}
+
+function doSomethingElse(a) {
+	return a - 1;
+}
+
+var b;
+
+doSomething( 2 ); // 15
+
+Explanation: function doSomething has the parameter a which will be defined upon calling the function. Inside of this function, we are mutating b to be equal to a + the function dosomethingElse(which is declared below), and a * 2;. Following that, we are console logging the result of b * 2. Function do something else just takes in a and subtracts one.
+
+This is a bad example because doSomethingElse is a private detail of how doSomething works. This could be dangerous.
+
+
+A BETTER WAY OF WRITING THE ABOVE
+
+function doSomething(a) {
+	function doSomethingElse(a) {
+		return a - 1;
+	}
+
+	var b;
+
+	b = a + doSomethingElse( a * 2 );
+
+	console.log( b * 3 );
+}
+
+doSomething( 2 ); // 15
+
+By nesting doSomethingElse, you’re encapsulating the functionality of the function in the doSomething function rather than exposing it’s details to the global scope. 
+
+Collision avoidance
+By nesting your functions like above, you can avoid running into variable namespace pollution. IE:
+
+function foo() {
+	function bar(a) {
+		i = 3; // changing the `i` in the enclosing scope's for-loop
+		console.log( a + i );
+	}
+
+	for (var i=0; i<10; i++) {
+		bar( i * 2 ); // oops, infinite loop ahead!
+	}
+}
+
+foo();
+
+Function expression 
+
+Var a = function a() { … }
+
+Function declaration 
+
+Function a() { …. } 
+
+Anonymous function expression
+
+function() { … }
+
+just name your damn functions, it saves time with debugging and can be used with recursion.
+
+IIFE
+(Function a() { …. } ());
+
+
+LET
+
+Let sets the scope of the variable to wherever it was declared. 
+
+CONST
+
+Same as let but doesn’t let you redeclare the variable.
+
