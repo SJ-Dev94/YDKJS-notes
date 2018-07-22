@@ -1,0 +1,13 @@
+Hoisting
+
+Declaration comes before assignment
+
+hoisting = variable and function declarations are       moved to the top of the code block.
+
+NOTE: THIS DOES NOT MEAN THAT ASSIGNMENTS DO AS WELL, THAT WOULD CHANGE HOW CODE EXECUTES
+
+Function expressions are not hoisted
+
+Functions are hoisted first by the engine, and then variable declarations.
+
+At the functions first part of this chapter in YDKJS, the example given shows that functions are hoisted first, but uses an example where the function comes first and then the variable. I believe it would be more constructive to switch this, making the variable declaration come first in the code snippet rather than the function. I think that this would nail the idea of a non-linear flow of code, rather than presenting the ideas in a fashion that goes against our logic. Perhaps write an issue for this. A minor, but constructive change in my opinion.
