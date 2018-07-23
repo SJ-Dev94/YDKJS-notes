@@ -1,0 +1,24 @@
+CLOSURE
+
+Closure is when a function is able to remember and access its lexical scope even when that function is executing outside its lexical scope.
+
+Useful for executing functions outsides of their declared lexical scope
+
+Example of observing closure from YDKJS (copy)
+
+function foo() {
+	var a = 2;
+
+	function bar() {
+		console.log( a );
+	}
+
+	return bar;
+}
+
+var baz = foo();
+
+baz(); // 2 -- Whoa, closure was just observed, man.
+
+
+“…. any of the various ways that functions can be passed around as values, and indeed invoked in other locations, are all examples of observing/exercising closure.”
