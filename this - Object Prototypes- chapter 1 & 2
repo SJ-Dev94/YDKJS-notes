@@ -1,0 +1,230 @@
+this & Object Prototypes
+
+“This” DOES NOT REFERENCE A FUNCTION. It references EXECUTION CONTEXT. 
+
+EXECUTION CONTEXT has 4 rules. 
+
+——————————
+DEFAULT BINDING
+——————————
+
+The DEFAULT BINDING  for this is the call site of the function. For example
+
+Function x () { 
+	this.a;
+}
+
+var a = 3;
+
+x(); 
+
+// this will call x, and since x is called in the global scope where a is declared, function x can use this.a
+
+This will NOT work if the global scope is in strict mode, since the global scope is inaccessible. Something to note is that you can in fact use strict mode inside of a function.
+
+—————————
+IMPLICIT BINDING
+—————————
+
+Implicit binding requires you to mutate an object to include a reference to the function you would like to reference. See below (obj { foo: foo})
+
+function foo() {
+	console.log( this.a );
+}
+
+var obj = {
+	a: 2,
+	foo: foo
+};
+
+obj.foo(); // 2
+
+
+Here we have a function foo() that is console.log(this.a). We also have an object called obj that has two properties, a: 2, and foo: foo.
+
+At the bottom we’re calling obj.foo(); and its returning 2 because the obj object is owning (or attached) to foo when we call it.
+
+The implicit binding rule states that given call of something like obj.foo(); obj would be the context of this 
+
+————————
+LOST IMPLICITY
+————————
+
+A binding can only take a top level argument.
+
+Ex: bar.foo.baz()
+
+Bar’s binding would be lost in this.
+It would actually call as foo.baz();
+
+Take example
+
+function foo() {
+	console.log( this.a );
+}
+
+var obj = {
+	a: 2,
+	foo: foo
+};
+
+var bar = obj.foo; // function reference/alias!
+
+var a = "oops, global"; // `a` also property on global object
+
+bar(); // "oops, global"
+
+Now with this same logic, callback functions will also cause an object to lose its this binding in a similar fashion.
+
+Function foo() { 
+	console.log(z);
+}
+
+Function makeFooWork(fn) {
+
+	fn();
+ }
+
+Var a = { 
+	b: 3,
+	foo: foo
+} 
+
+Var c = “NOW GLOBAL”
+
+makeFooWork(a.foo) // NOW GLOBAL
+
+This is because makeFooWork(a.foo) is the same as our example above, i.e.: bar() referencing obj.foo (which would be like bar.obj.foo)
+
+——————
+EXPLICIT BINDING
+————————
+
+Uses call() or apply()
+
+function foo() {
+	console.log( this.a );
+}
+
+var obj = {
+	a: 2
+};
+
+foo.call( obj ); // 2 — EXPLICIT BINDING
+
+Invoked foo explicitly with foo.call, and forced obj to be this.
+
+_________________
+HARD BINDING
+_________________
+
+function foo() {
+	console.log( this.a );
+}
+
+var obj = {
+	a: 2
+};
+
+var bar = function() {
+	foo.call( obj );
+};
+
+bar(); // 2
+setTimeout( bar, 100 ); // 2
+
+// `bar` hard binds `foo`'s `this` to `obj`
+// so that it cannot be overriden
+bar.call( window ); // 2
+
+IN THIS EXAMPLE
+Inside of the function bar, this is explicitly bound to object. (foo.call(obj));
+
+No matter where you call bar later, the this will always be bound. This lets us get around the previous issue of not implicitly losing a binding, i.e: settimeout(obj.foo, 3000) (which once again, would be like settimeout.obj.foo(), which doesn’t work).
+
+SO NOW WITH OUR NEW HARD BINDING:
+setTimeOut(bar, 1000) WILL WORK JUST FINE!
+
+function foo(something) {
+	console.log( this.a, something );
+	return this.a + something;
+}
+
+var obj = {
+	a: 2
+};
+
+var bar = function() {
+	return foo.apply( obj, arguments );
+};
+
+var b = bar( 3 ); // 2 3
+console.log( b ); // 5
+
+BUT WAIT THERES MORE
+
+ES5 introduced bind, which is exactly this pattern, just in way less steps! WOW!
+
+var module = {
+  x: 42,
+  getX: function() {
+    return this.x;
+  }
+}
+
+var unboundGetX = module.getX;
+
+console.log(unboundGetX()); 
+// The function 
+gets invoked at the global scope
+
+// expected output: undefined
+
+var boundGetX = 
+
+unboundGetX.bind(module);
+
+console.log(boundGetX());
+// expected output: 42
+
+
+_____________________
+NEW binding
+______________________
+
+Ex: let x = new Bird(x) {
+	this.x = x;
+ }
+
+Let z = bird(4);
+
+console.log(z.x);  // logs 4
+
+New creates a new object that binds this to the object bird
+
+And thats it folks. Your 4 rules: default, implicit, explicit, and new
+
+Now we deal with order. If there are multiple eligible rules, which comes first?
+
+NEW > EXPLICIT > IMPLICIT > DEFAULT
+
+FINALLY…
+
+DA DA DA DAAAAA…
+
+LEXICAL THIS =>
+
+If you use an arrow function, this is bound to the lexical scope of its function.
+
+function foo() {
+	setTimeout(() => {
+		// `this` here is lexically adopted from `foo()`
+		console.log( this.a );
+	},100);
+}
+
+var obj = {
+	a: 2
+};
+
+foo.call( obj ); // 2
